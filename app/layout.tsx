@@ -7,8 +7,9 @@ export const metadata: Metadata = {
     template: '%s | PayStat Dashboard',
     default: 'PayStat Dashboard',
   },
-  description: 'The official Next.js Course Dashboard, built with App Router.',
-  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+  description:
+    'Discover PayStat: the ultimate solution for seamless invoice management and insightful revenue trend analysis. Streamline your billing process and unlock powerful analytics for your business growth.',
+  metadataBase: new URL('https://nextjs-dashboard-nu-green-70.vercel.app/'),
 };
 
 export default function RootLayout({
