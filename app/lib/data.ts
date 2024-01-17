@@ -11,21 +11,28 @@ import {
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
 
-export async function fetchRevenue() {
+// year: number
+export async function fetchRevenue(year: string) {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
 
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    console.log('Data fetch completed after 3 seconds.');
+    const data = await sql<Revenue>`WITH months AS (
+      SELECT generate_series(
+        DATE '2022-01-01',
+        DATE '2022-12-01',
+        INTERVAL '1 month'
+      ) AS month
+    )
+    
+    SELECT 
+      TO_CHAR(m.month, 'Mon') AS month,
+      COALESCE(SUM(i.AMOUNT), 0) AS revenue
+    FROM months m
+    LEFT JOIN invoices i ON EXTRACT(YEAR FROM i.date) = ${year} AND EXTRACT(MONTH FROM i.date) = EXTRACT(MONTH FROM m.month) AND i.STATUS = 'paid'
+    GROUP BY TO_CHAR(m.month, 'Mon')
+    ORDER BY TO_DATE(TO_CHAR(m.month, 'Mon'), 'Mon');`;
 
     return data.rows;
   } catch (error) {
@@ -58,9 +65,6 @@ export async function fetchLatestInvoices() {
 export async function fetchCardData() {
   noStore();
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT

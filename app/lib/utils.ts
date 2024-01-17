@@ -28,8 +28,22 @@ export const generateYAxis = (revenue: Revenue[]) => {
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
 
-  for (let i = topLabel; i >= 0; i -= 1000) {
-    yAxisLabels.push(`$${i / 1000}K`);
+  console.log('highest record: ', highestRecord);
+  console.log('highest record / 1000: ', Math.ceil(highestRecord / 1000));
+
+  const decimalFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+  });
+
+  const interval = Math.trunc(highestRecord / 6);
+  for (let i = topLabel; i >= 0; i -= interval) {
+    if (i - interval <= 0) {
+      yAxisLabels.push('$0k');
+      break;
+    } else {
+      yAxisLabels.push(`$${decimalFormatter.format(i / 1000)}K`);
+    }
   }
 
   return { yAxisLabels, topLabel };
