@@ -27,7 +27,7 @@ PayStat empowers you to effortlessly manage customer invoices and gain valuable 
 
 ## Demo Credentials
 
-Experience the application [https://nextjs-dashboard-nu-green-70.vercel.app/](live) using the following credentials:
+Experience the application [live](https://nextjs-dashboard-nu-green-70.vercel.app/) using the following credentials:
 
 ```bash
 Username: test@demo.com
